@@ -94,7 +94,7 @@ const Overview = () => {
         {/* Subscription Info Card */}
         <Card className="border-none bg-primary-foreground shadow-lg ">
           {/* Header */}
-          <CardHeader className="flex items-center justify-between ">
+          <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               Subscriptions
             </h1>
@@ -105,7 +105,7 @@ const Overview = () => {
               See all
             </Button>
           </CardHeader>
-          <CardHeader>
+          <CardHeader className="p-2 lg:p-6" >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Active Subscription */}
               <div className="bg-primary-foreground shadow-lg rounded-lg flex flex-col justify-center p-3">
@@ -146,7 +146,7 @@ const Overview = () => {
           </CardHeader>
 
           {/* Table */}
-          <CardContent className="">
+          <CardContent className="p-2 lg:p-6">
             <div className="">
               <Table>
                 <TableHeader>

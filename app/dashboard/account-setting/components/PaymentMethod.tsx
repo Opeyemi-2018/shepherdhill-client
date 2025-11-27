@@ -5,9 +5,9 @@ import React from "react";
 const PaymentMethod = () => {
   return (
     <div className="bg-primary-foreground py-6 rounded-lg shadow">
-      <h2 className="text-[16px]  font-bold mb-4 px-6">Payment Method</h2>
+      <h2 className="text-[16px]  font-bold mb-4 px-3 lg:px-6">Payment Method</h2>
       <hr />
-      <div className="px-6 pt-2 space-y-3">
+      <div className="px-3 lg:px-6 pt-2 space-y-3">
         <div className="w-full">
           <Image
             src={"/vis.svg"}

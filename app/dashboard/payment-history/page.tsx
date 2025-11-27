@@ -70,7 +70,7 @@ function PaymentHistory() {
         {/* Subscription Info Card */}
         <Card className="border-none bg-primary-foreground shadow-lg">
           {/* Header */}
-          <CardHeader className="flex items-center justify-between ">
+          <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               Payment History
             </h1>
@@ -83,7 +83,7 @@ function PaymentHistory() {
           </CardHeader>
 
           {/* Table */}
-          <CardContent>
+          <CardContent className="p-2 lg:p-6">
             <div className="">
               <Table>
                 <TableHeader>

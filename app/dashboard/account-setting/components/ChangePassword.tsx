@@ -28,11 +28,16 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="bg-primary-foreground py-6 rounded-lg py-6 shadow-lg">
-      <h2 className="text-[16px] px-6 font-bold mb-4">Change Password</h2>
+    <div className="bg-primary-foreground rounded-lg py-6 shadow-lg">
+      <h2 className="text-[16px] px-3 lg:px-6 font-bold mb-4">
+        Change Password
+      </h2>
       <hr />
-      <Form {...form} >
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-6 pt-3">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 px-3 lg:px-6 pt-3"
+        >
           <FormField
             control={form.control}
             name="currentPassword"

@@ -2,9 +2,9 @@ import { Switch } from "@/components/ui/switch";
 const Security = () => {
   return (
     <div className="bg-primary-foreground py-6 rounded-lg shadow">
-      <h2 className="text-[16px]  font-bold mb-4 px-6">Security</h2>
+      <h2 className="text-[16px]  font-bold mb-4 px-3 lg:px-6">Security</h2>
       <hr />
-      <div className="px-6 pt-2">
+      <div className="px-3 lg:px-6 pt-2">
         <div className="flex justify-between">
           <p className="text-[14px] font-medium text-[#3A3A3A] dark:text-[#979797]">
             Two-Factor Authentication

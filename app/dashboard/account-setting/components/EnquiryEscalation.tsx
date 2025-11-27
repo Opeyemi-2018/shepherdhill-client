@@ -60,9 +60,9 @@ const EnquiryEscalation = () => {
 
   return (
     <div className="bg-primary-foreground py-6 rounded-lg shadow-lg">
-      <h2 className="text-[16px] font-bold mb-4 px-6">Enquiry Escalation</h2>
+      <h2 className="text-[16px] font-bold mb-4 px-3 lg:px-6">Enquiry Escalation</h2>
       <hr />
-      <div className="space-y-4 px-6 mt-4">
+      <div className="space-y-4 px-3 lg:px-6 mt-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField

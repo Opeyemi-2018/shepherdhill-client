@@ -42,7 +42,7 @@ interface PaymentItem {
   service: string;
   numberOfStaffs: number;
   status: "Pending" | "Payed";
-  date: "22, January 2025"
+  date: "22, January 2025";
 }
 
 const subscriptionData: SubscriptionItem[] = [
@@ -88,30 +88,29 @@ const paymentHistory: PaymentItem[] = [
     service: "Man Guarding",
     numberOfStaffs: 8,
     status: "Pending",
-    date: "22, January 2025"
+    date: "22, January 2025",
   },
   {
     Reference: "67891",
     service: "Peace Keeping",
     numberOfStaffs: 8,
     status: "Payed",
-    date: "22, January 2025"
+    date: "22, January 2025",
   },
   {
     Reference: "64830",
     service: "Man Guarding",
     numberOfStaffs: 8,
     status: "Pending",
-    date: "22, January 2025"
+    date: "22, January 2025",
   },
   {
     Reference: "748505",
     service: "Peace Keeping",
     numberOfStaffs: 8,
     status: "Payed",
-    date: "22, January 2025"
+    date: "22, January 2025",
   },
-  
 ];
 
 const SubScription = () => {
@@ -149,10 +148,10 @@ const SubScription = () => {
           </h2>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           <Button
             onClick={() => setIsDialogOpen(true)}
-            className="bg-[#FAB435]/30 text-[#E59300]"
+            className="bg-[#FAB435]/30 text-[#E59300] "
           >
             + Request New Service
           </Button>
@@ -165,7 +164,7 @@ const SubScription = () => {
         {/* Subscription Info Card */}
         <Card className="border-none bg-primary-foreground shadow-lg">
           {/* Header */}
-          <CardHeader className="flex items-center justify-between ">
+          <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               All Subscriptions
             </h1>
@@ -182,7 +181,7 @@ const SubScription = () => {
           </CardHeader>
 
           {/* Table */}
-          <CardContent>
+          <CardContent className="p-2 lg:p-6">
             <div className="">
               <Table>
                 <TableHeader>

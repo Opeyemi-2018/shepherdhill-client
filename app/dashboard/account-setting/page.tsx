@@ -9,6 +9,17 @@ import EnquiryEscalation from "./components/EnquiryEscalation";
 import Headercontent from "@/components/Headercontent";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const AccountSetting = () => {
   const [activeTab, setActiveTab] = useState("account");
@@ -100,9 +111,31 @@ const AccountSetting = () => {
           </button>
         </li>
       </ul>
-      <Button className="bg-[#F42121]/10 text-[#F42121] dark:bg-[#F42121] dark:text-white w-full md:w-[60%] mt-4">
-        Sign Out
-      </Button>
+
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <Button className="bg-[#F42121]/10 hidden lg:inline text-[#F42121] dark:bg-[#F42121]/20  dark:text-white w-full  mt-4">
+            Sign Out
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will log you out of the system
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center flex-row justify-center">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              // onClick={() => logout()}
+              className="dark:text-white bg-red-500 dark:hover:text-[#3A3A3A]"
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 

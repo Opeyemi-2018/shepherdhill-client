@@ -145,7 +145,7 @@ const Header = () => {
                         <span className="sr-only">Toggle theme</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="start">
                       <DropdownMenuItem onClick={() => setTheme("light")}>
                         Light
                       </DropdownMenuItem>
@@ -185,6 +185,9 @@ const Header = () => {
                     + Request New Service
                   </Button>
                 </div>
+                <Button className="bg-[#F42121]/10  text-[#F42121] dark:bg-[#F42121] dark:text-white w-full md:w-[60%] mt-4">
+                  Sign Out
+                </Button>
               </SheetContent>
             </Sheet>
           </div>
