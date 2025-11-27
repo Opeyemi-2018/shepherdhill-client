@@ -56,7 +56,7 @@ const SignIn = () => {
     }
   };
   return (
-    <div className="w-full max-w-lg">
+    <div className="w-full max-w-lg -mt-36 lg:mt-0">
       <div className="flex items-center justify-between pb-10">
         <div>
           <h2 className="text-[#3A3A3A] font-bold text-[24px]  dark:text-white">
