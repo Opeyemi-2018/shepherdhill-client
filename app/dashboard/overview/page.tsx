@@ -105,10 +105,10 @@ const Overview = () => {
               See all
             </Button>
           </CardHeader>
-          <CardHeader className="p-2 lg:p-6" >
+          <CardHeader className="p-2 lg:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Active Subscription */}
-              <div className="bg-primary-foreground shadow-lg rounded-lg flex flex-col justify-center p-3">
+              <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                 <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
                   Active Subscription
                 </CardDescription>
@@ -118,7 +118,7 @@ const Overview = () => {
               </div>
 
               {/* Validity Period */}
-              <div className="bg-primary-foreground shadow-lg rounded-lg flex flex-col justify-center p-3">
+              <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                 <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
                   Validity Period
                 </CardDescription>
@@ -128,7 +128,7 @@ const Overview = () => {
               </div>
 
               {/* Next Payment Date */}
-              <div className="bg-primary-foreground shadow-lg rounded-lg flex flex-col justify-center p-3">
+              <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                 <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
                   Next Payment Date
                 </CardDescription>

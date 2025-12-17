@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MoreVertical, Star, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { TfiReload } from "react-icons/tfi";
 
 interface Staff {
   id: string;
@@ -192,11 +193,8 @@ const StaffList = () => {
                 Active personnel on duty at Eko Hotels
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="bg-[#FAB435]/30 text-[#E89500] border-none"
-            >
-              Export List
+            <Button className="bg-[#FAB435]/30 text-[#E89500]">
+              <TfiReload className=" text-4xl" />
             </Button>
           </CardHeader>
 
