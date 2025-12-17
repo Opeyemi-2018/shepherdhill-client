@@ -43,6 +43,11 @@ const Header = () => {
       icon: MdOutlinePayments,
     },
     {
+      name: "Staff",
+      path: "/dashboard/staffs",
+      icon: MdOutlinePayments,
+    },
+    {
       name: "Account Setting",
       path: "/dashboard/account-setting",
       icon: IoIosSettings,

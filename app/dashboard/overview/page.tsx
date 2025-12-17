@@ -75,7 +75,7 @@ const Overview = () => {
       <div className="flex items-center justify-between ">
         <Headercontent
           title="Welcome "
-          subTitle="Ann Hotels"
+          subTitle="Eko Hotels"
           description="Start with a clear overview of what matters most"
         />
 
