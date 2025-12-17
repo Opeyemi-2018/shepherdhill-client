@@ -17,7 +17,7 @@ interface PaymentItem {
   Reference: string;
   service: string;
   numberOfStaffs: number;
-  status: "Pending" | "Payed";
+  status: "Pending" | "paid";
   date: string;
 }
 
@@ -33,7 +33,7 @@ const paymentHistory: PaymentItem[] = [
     Reference: "67891",
     service: "Peace Keeping",
     numberOfStaffs: 8,
-    status: "Payed",
+    status: "paid",
     date: "22, January 2025",
   },
   {
@@ -47,7 +47,7 @@ const paymentHistory: PaymentItem[] = [
     Reference: "748505",
     service: "Peace Keeping",
     numberOfStaffs: 8,
-    status: "Payed",
+    status: "paid",
     date: "22, January 2025",
   },
 ];
@@ -121,14 +121,14 @@ function PaymentHistory() {
                       <TableCell>
                         <Badge
                           className={
-                            item.status === "Payed"
+                            item.status === "paid"
                               ? " text-[#5ECF53] bg-transparent"
                               : " text-[#E89500] bg-transparent"
                           }
                         >
                           <span
                             className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              item.status === "Payed"
+                              item.status === "paid"
                                 ? "bg-[#5ECF53]"
                                 : "bg-[#E89500]"
                             }`}

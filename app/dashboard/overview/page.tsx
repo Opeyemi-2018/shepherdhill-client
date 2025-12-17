@@ -28,7 +28,7 @@ interface SubscriptionItem {
   service: string;
   numberOfStaffs: number;
   equipments: number;
-  status: "Pending" | "Payed";
+  status: "Pending" | "paid";
 }
 
 const subscriptionData: SubscriptionItem[] = [
@@ -58,14 +58,14 @@ const subscriptionData: SubscriptionItem[] = [
     service: "Man Guarding",
     numberOfStaffs: 9,
     equipments: 9,
-    status: "Payed",
+    status: "paid",
   },
   {
     period: "January - March",
     service: "Operations",
     numberOfStaffs: 1,
     equipments: 1,
-    status: "Payed",
+    status: "paid",
   },
 ];
 
@@ -189,14 +189,14 @@ const Overview = () => {
                       <TableCell>
                         <Badge
                           className={
-                            item.status === "Payed"
+                            item.status === "paid"
                               ? " text-[#5ECF53] bg-transparent"
                               : " text-[#E89500] bg-transparent"
                           }
                         >
                           <span
                             className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              item.status === "Payed"
+                              item.status === "paid"
                                 ? "bg-[#5ECF53]"
                                 : "bg-[#E89500]"
                             }`}

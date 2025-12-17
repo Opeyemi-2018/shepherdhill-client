@@ -35,13 +35,13 @@ interface SubscriptionItem {
   service: string;
   numberOfStaffs: number;
   equipments: number;
-  status: "Pending" | "Payed";
+  status: "Pending" | "paid";
 }
 interface PaymentItem {
   Reference: string;
   service: string;
   numberOfStaffs: number;
-  status: "Pending" | "Payed";
+  status: "Pending" | "paid";
   date: "22, January 2025";
 }
 
@@ -72,14 +72,14 @@ const subscriptionData: SubscriptionItem[] = [
     service: "Man Guarding",
     numberOfStaffs: 9,
     equipments: 9,
-    status: "Payed",
+    status: "paid",
   },
   {
     period: "January - March",
     service: "Operations",
     numberOfStaffs: 1,
     equipments: 1,
-    status: "Payed",
+    status: "paid",
   },
 ];
 const paymentHistory: PaymentItem[] = [
@@ -94,7 +94,7 @@ const paymentHistory: PaymentItem[] = [
     Reference: "67891",
     service: "Peace Keeping",
     numberOfStaffs: 8,
-    status: "Payed",
+    status: "paid",
     date: "22, January 2025",
   },
   {
@@ -108,7 +108,7 @@ const paymentHistory: PaymentItem[] = [
     Reference: "748505",
     service: "Peace Keeping",
     numberOfStaffs: 8,
-    status: "Payed",
+    status: "paid",
     date: "22, January 2025",
   },
 ];
@@ -224,14 +224,14 @@ const SubScription = () => {
                       <TableCell>
                         <Badge
                           className={
-                            item.status === "Payed"
+                            item.status === "paid"
                               ? " text-[#5ECF53] bg-transparent"
                               : " text-[#E89500] bg-transparent"
                           }
                         >
                           <span
                             className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              item.status === "Payed"
+                              item.status === "paid"
                                 ? "bg-[#5ECF53]"
                                 : "bg-[#E89500]"
                             }`}
