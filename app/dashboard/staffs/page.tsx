@@ -31,6 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MoreVertical, Star, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { TfiReload } from "react-icons/tfi";
+import { useAuth } from "@/context/AuthContext";
 
 interface Staff {
   id: string;
@@ -129,6 +130,8 @@ const StaffList = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isViewMode, setIsViewMode] = useState(false);
+    const { user } = useAuth()
+  
 
   const handleReviewClick = (staff: Staff) => {
     setSelectedStaff(staff);
@@ -178,7 +181,7 @@ const StaffList = () => {
     <div className="mt-10">
       <Headercontent
         title="Staff Management"
-        subTitle="Eko Hotels"
+        subTitle={user?.name}
         description="View and manage all staff members assigned to this location"
       />
 

@@ -5,12 +5,7 @@ import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -29,114 +24,46 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import AddNewService from "@/components/AddNewService";
-
-interface SubscriptionItem {
-  period: string;
-  service: string;
-  numberOfStaffs: number;
-  equipments: number;
-  status: "Pending" | "paid";
-}
-interface PaymentItem {
-  Reference: string;
-  service: string;
-  numberOfStaffs: number;
-  status: "Pending" | "paid";
-  date: "22, January 2025";
-}
-
-const subscriptionData: SubscriptionItem[] = [
-  {
-    period: "January - March",
-    service: "Man Guarding",
-    numberOfStaffs: 8,
-    equipments: 8,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Security",
-    numberOfStaffs: 3,
-    equipments: 3,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Security",
-    numberOfStaffs: 7,
-    equipments: 7,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Man Guarding",
-    numberOfStaffs: 9,
-    equipments: 9,
-    status: "paid",
-  },
-  {
-    period: "January - March",
-    service: "Operations",
-    numberOfStaffs: 1,
-    equipments: 1,
-    status: "paid",
-  },
-];
-const paymentHistory: PaymentItem[] = [
-  {
-    Reference: "12345",
-    service: "Man Guarding",
-    numberOfStaffs: 8,
-    status: "Pending",
-    date: "22, January 2025",
-  },
-  {
-    Reference: "67891",
-    service: "Peace Keeping",
-    numberOfStaffs: 8,
-    status: "paid",
-    date: "22, January 2025",
-  },
-  {
-    Reference: "64830",
-    service: "Man Guarding",
-    numberOfStaffs: 8,
-    status: "Pending",
-    date: "22, January 2025",
-  },
-  {
-    Reference: "748505",
-    service: "Peace Keeping",
-    numberOfStaffs: 8,
-    status: "paid",
-    date: "22, January 2025",
-  },
-];
+import { useSubscription } from "@/hooks/useSubscription";
 
 const SubScription = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data, isLoading, error, updateFilters } = useSubscription();
+
+  // Get all available services for display
+  const allPlans =
+    data?.filters.available_services.join(", ") || "No active plans";
+
   return (
     <div className=" mt-10">
       <div className="flex items-center justify-between ">
-        <Headercontent
-          subTitle="Subscriptions "
-          // subTitle="Ann Hotels"
-          // description="Start with a clear overview of what matters most"
-        />
-
+        <Headercontent subTitle="Subscriptions " />
         <Button className="bg-[#FAB435]"> Make Payment</Button>
       </div>
+
       <div className="flex items-center flex-col md:flex-row justify-between gap-4 pt-4">
-        <StatCard icon={FaRegMoneyBillAlt} label="Active Plan" value="20" />
+        <StatCard
+          icon={FaRegMoneyBillAlt}
+          label="Active Plan"
+          value={
+            isLoading
+              ? "Loading..."
+              : data?.cards.active_plans.toString() || "0"
+          }
+        />
         <StatCard
           icon={CiCalendarDate}
           label="Validity Period"
-          value="Jan, 2026 - Feb 2026"
+          value={
+            isLoading ? "Loading..." : data?.cards.validity_period || "N/A"
+          }
         />
         <StatCard
           icon={CiCalendarDate}
           label="Next Payment Date"
-          value="24 Jan, 2026"
+          value={
+            isLoading ? "Loading..." : data?.cards.next_payment_date || "N/A"
+          }
         />
       </div>
 
@@ -144,7 +71,7 @@ const SubScription = () => {
         <div>
           <h1 className="text-[14px] text-[#979797]">All Plans</h1>
           <h2 className="text-[16px] whitespace-nowrap lg:font-bold text-[#3A3A3A] dark:text-[#979797]">
-            Security, Operations, Man Guarding
+            {isLoading ? "Loading..." : allPlans}
           </h2>
         </div>
 
@@ -168,87 +95,111 @@ const SubScription = () => {
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               All Subscriptions
             </h1>
-            <Select>
+            <Select onValueChange={(value) => updateFilters({ status: value })}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="filter" />
+                <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="service">service</SelectItem>
-                <SelectItem value="pay">pay</SelectItem>
-                <SelectItem value="service">service</SelectItem>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </CardHeader>
 
           {/* Table */}
           <CardContent className="p-2 lg:p-6">
-            <div className="">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50 text-[#3A3A3A]/50 text-[12px] font-medium">
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Period
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Service
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Number of Staffs
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Equipments
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Status
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Download
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subscriptionData.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.period}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.service}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.numberOfStaffs}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.equipments}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            item.status === "paid"
-                              ? " text-[#5ECF53] bg-transparent"
-                              : " text-[#E89500] bg-transparent"
-                          }
-                        >
-                          <span
-                            className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              item.status === "paid"
-                                ? "bg-[#5ECF53]"
-                                : "bg-[#E89500]"
-                            }`}
-                          />
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="outline" size="sm">
-                          Download
-                        </Button>
-                      </TableCell>
+            {error && (
+              <div className="text-red-500 text-center py-4">{error}</div>
+            )}
+
+            {isLoading ? (
+              <div className="text-center py-10">
+                <p className="text-[#979797]">Loading subscriptions...</p>
+              </div>
+            ) : data?.items.data.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-[#979797]">No subscriptions found</p>
+              </div>
+            ) : (
+              <div className="">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 text-[#3A3A3A]/50 text-[12px] font-medium">
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Period
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Service
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Number of Staffs
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Equipments
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Status
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Download
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {data?.items.data.map((item, index) => (
+                      <TableRow key={item.id || index}>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.period}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.service}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.numberOfStaffs}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.equipments}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className={
+                              item.status === "paid"
+                                ? " text-[#5ECF53] bg-transparent"
+                                : " text-[#E89500] bg-transparent"
+                            }
+                          >
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                                item.status === "paid"
+                                  ? "bg-[#5ECF53]"
+                                  : "bg-[#E89500]"
+                              }`}
+                            />
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            Download
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* Pagination Info */}
+                {data && data.items.total > 0 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <p className="text-sm text-[#979797]">
+                      Showing {data.items.from || 0} to {data.items.to || 0} of{" "}
+                      {data.items.total} subscriptions
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

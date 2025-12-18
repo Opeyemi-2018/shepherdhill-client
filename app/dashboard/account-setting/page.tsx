@@ -20,11 +20,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/context/AuthContext";
 
 const AccountSetting = () => {
   const [activeTab, setActiveTab] = useState("account");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+const {logout} = useAuth()
   const renderContent = () => {
     switch (activeTab) {
       case "account":
@@ -118,7 +119,7 @@ const AccountSetting = () => {
             Sign Out
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="">
+        <AlertDialogContent className="border border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -128,7 +129,7 @@ const AccountSetting = () => {
           <AlertDialogFooter className="flex items-center flex-row justify-center">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              // onClick={() => logout()}
+              onClick={() => logout()}
               className="dark:text-white bg-red-500 dark:hover:text-[#3A3A3A]"
             >
               Continue

@@ -1,4 +1,5 @@
 "use client";
+
 import StatCard from "@/components/Cards";
 import DateTimeDisplay from "@/components/DateTime";
 import Headercontent from "@/components/Headercontent";
@@ -22,77 +23,110 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import PaymentHistory from "../payment-history/page";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+import { useSubscription } from "@/hooks/useSubscription"; // ← Import the hook
 
-interface SubscriptionItem {
-  period: string;
-  service: string;
-  numberOfStaffs: number;
-  equipments: number;
-  status: "Pending" | "paid";
+// Remove the static interface and array — we'll use hook data
+// interface SubscriptionItem { ... }
+// const subscriptionData: SubscriptionItem[] = [ ... ];
+
+interface DashboardData {
+  company_name: string;
+  active_staff: number;
+  total_payment: number;
+  active_subscription: string;
+  validity_period: string;
+  next_payment_date: string;
 }
 
-const subscriptionData: SubscriptionItem[] = [
-  {
-    period: "January - March",
-    service: "Man Guarding",
-    numberOfStaffs: 8,
-    equipments: 8,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Security",
-    numberOfStaffs: 3,
-    equipments: 3,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Security",
-    numberOfStaffs: 7,
-    equipments: 7,
-    status: "Pending",
-  },
-  {
-    period: "January - March",
-    service: "Man Guarding",
-    numberOfStaffs: 9,
-    equipments: 9,
-    status: "paid",
-  },
-  {
-    period: "January - March",
-    service: "Operations",
-    numberOfStaffs: 1,
-    equipments: 1,
-    status: "paid",
-  },
-];
-
 const Overview = () => {
+  const { user } = useAuth();
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+
+  // Use the same hook as in Subscriptions page
+  const {
+    data: subscriptionData,
+    isLoading: isLoadingSubscriptions,
+    error: subscriptionError,
+  } = useSubscription();
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/client/dashboard`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard data");
+        }
+
+        const result = await response.json();
+        if (result.status && result.data) {
+          setDashboardData(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoadingDashboard(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const formatNumber = (num: number) => {
+    return num.toLocaleString();
+  };
+
   return (
-    <div className=" mt-10">
-      <div className="flex items-center justify-between ">
+    <div className="mt-10">
+      <div className="flex items-center justify-between">
         <Headercontent
           title="Welcome "
-          subTitle="Eko Hotels"
+          subTitle={user?.name || "Guest"}
           description="Start with a clear overview of what matters most"
         />
 
         <DateTimeDisplay />
       </div>
+
       <div className="flex items-center flex-col md:flex-row justify-between gap-4 pt-4">
-        <StatCard icon={FaUsers} label="Active Staffs" value="2,400,234" />
+        <StatCard
+          icon={FaUsers}
+          label="Active Staffs"
+          value={
+            isLoadingDashboard
+              ? "Loading..."
+              : formatNumber(dashboardData?.active_staff || 0)
+          }
+        />
         <StatCard
           icon={MdOutlinePayments}
           label="Total Payment"
-          value="200,000"
+          value={
+            isLoadingDashboard
+              ? "Loading..."
+              : formatNumber(dashboardData?.total_payment || 0)
+          }
         />
       </div>
 
-      <div className="w-full mt-7 space-y-6 ">
+      <div className="w-full mt-7 space-y-6">
         {/* Subscription Info Card */}
-        <Card className="border-none bg-primary-foreground shadow-lg ">
+        <Card className="border-none bg-primary-foreground shadow-lg">
           {/* Header */}
           <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
@@ -105,6 +139,7 @@ const Overview = () => {
               See all
             </Button>
           </CardHeader>
+
           <CardHeader className="p-2 lg:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Active Subscription */}
@@ -113,7 +148,9 @@ const Overview = () => {
                   Active Subscription
                 </CardDescription>
                 <h2 className="text-[16px] text-[#3A3A3A] font-bold dark:text-white">
-                  Man Guarding
+                  {isLoadingSubscriptions
+                    ? "Loading..."
+                    : subscriptionData?.cards?.active_plans || "N/A"}
                 </h2>
               </div>
 
@@ -123,7 +160,9 @@ const Overview = () => {
                   Validity Period
                 </CardDescription>
                 <h2 className="text-[16px] text-[#3A3A3A] font-bold dark:text-white">
-                  Jan, 2026 - Feb 2026
+                  {isLoadingSubscriptions
+                    ? "Loading..."
+                    : subscriptionData?.cards?.validity_period || "N/A"}
                 </h2>
               </div>
 
@@ -133,11 +172,13 @@ const Overview = () => {
                   Next Payment Date
                 </CardDescription>
                 <h2 className="text-[16px] text-[#3A3A3A] font-bold dark:text-white">
-                  24 Jan, 2026
+                  {isLoadingSubscriptions
+                    ? "Loading..."
+                    : subscriptionData?.cards?.next_payment_date || "N/A"}
                 </h2>
                 <Button
                   size="sm"
-                  className="bg-[#FAB435]/30 text-[#E89500]  lg:w-[35%] border-none"
+                  className="bg-[#FAB435]/30 text-[#E89500] lg:w-[35%] border-none"
                 >
                   Make Payment
                 </Button>
@@ -148,71 +189,87 @@ const Overview = () => {
           {/* Table */}
           <CardContent className="p-2 lg:p-6">
             <div className="">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50 text-[#3A3A3A]/50 text-[12px] font-medium">
-                    <TableHead className=" text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Period
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Service
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Number of Staffs
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Equipments
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Status
-                    </TableHead>
-                    <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
-                      Download
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subscriptionData.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.period}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.service}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.numberOfStaffs}
-                      </TableCell>
-                      <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                        {item.equipments}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            item.status === "paid"
-                              ? " text-[#5ECF53] bg-transparent"
-                              : " text-[#E89500] bg-transparent"
-                          }
-                        >
-                          <span
-                            className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                              item.status === "paid"
-                                ? "bg-[#5ECF53]"
-                                : "bg-[#E89500]"
-                            }`}
-                          />
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="outline" size="sm">
-                          Download
-                        </Button>
-                      </TableCell>
+              {subscriptionError && (
+                <div className="text-red-500 text-center py-4">
+                  {subscriptionError}
+                </div>
+              )}
+
+              {isLoadingSubscriptions ? (
+                <div className="text-center py-10">
+                  <p className="text-[#979797]">Loading subscriptions...</p>
+                </div>
+              ) : subscriptionData?.items?.data?.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-[#979797]">No subscriptions found</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 text-[#3A3A3A]/50 text-[12px] font-medium">
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Period
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Service
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Number of Staffs
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Equipments
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Status
+                      </TableHead>
+                      <TableHead className="text-[#3A3A3A]/50 text-[12px] font-medium dark:text-white">
+                        Download
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {subscriptionData?.items?.data?.map((item, index) => (
+                      <TableRow key={item.id || index}>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.period || "N/A"}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.service || "N/A"}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.number_of_staffs || 0}
+                        </TableCell>
+                        <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
+                          {item.equipments || 0}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className={
+                              item.status === "paid"
+                                ? "text-[#5ECF53] bg-transparent"
+                                : "text-[#E89500] bg-transparent"
+                            }
+                          >
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                                item.status === "paid"
+                                  ? "bg-[#5ECF53]"
+                                  : "bg-[#E89500]"
+                              }`}
+                            />
+                            {item.status || "N/A"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            Download
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </div>
           </CardContent>
         </Card>

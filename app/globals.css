@@ -112,6 +112,12 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+[data-sonner-toast][data-type="success"] {
+  background-color: black !important;
+  color: #fab435 !important;
+  border-color: #fab435 !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

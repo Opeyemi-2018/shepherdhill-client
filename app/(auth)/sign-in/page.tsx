@@ -1,15 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { SignInSchema, SignInType } from "@/types/auth";
@@ -28,13 +21,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Moon, Sun } from "lucide-react";
+import { Loader2, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { loginUser } from "@/actions/signin";
+import { useAuth } from "@/context/AuthContext";
+
 const SignIn = () => {
   const { setTheme } = useTheme();
-
+  const { login } = useAuth();
   const router = useRouter();
+
   const form = useForm<SignInType>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
@@ -45,21 +42,32 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInType) => {
     try {
-      toast.success("Signed in successfully!");
-      console.log("form data :", data);
-      setTimeout(() => {
-        router.push("/dashboard/overview");
-      }, 3000);
+      const result = await loginUser(data.email, data.password);
+
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
+
+      if (result.user && result.token) {
+        toast.success(result.message);
+        // Use the auth context login function
+        login(result.user, result.token);
+        // The router.push is handled in the context's login function
+      } else {
+        toast.error("Invalid response from server");
+      }
     } catch (error) {
-      toast.error("Failed to sign in. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
       console.error("Sign-in error:", error);
     }
   };
+
   return (
     <div className="w-full max-w-lg -mt-36 lg:mt-0">
       <div className="flex items-center justify-between pb-10">
         <div>
-          <h2 className="text-[#3A3A3A] font-bold text-[24px]  dark:text-white">
+          <h2 className="text-[#3A3A3A] font-bold text-[24px] dark:text-white">
             Welcome
           </h2>
           <h2 className="text-[#3A3A3A] font-regular text-[14px] dark:text-gray-500">
@@ -102,6 +110,8 @@ const SignIn = () => {
                         placeholder="enter your email"
                         {...field}
                         className="py-5"
+                        type="email"
+                        disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -118,7 +128,9 @@ const SignIn = () => {
                       <Input
                         placeholder="enter your password"
                         {...field}
-                        className="py-5 "
+                        className="py-5"
+                        type="password"
+                        disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -127,7 +139,7 @@ const SignIn = () => {
               />
               <Link
                 href="forgot-password"
-                className="text-sm underline-offset-4 text-[#FAB435] hover:underline "
+                className="text-sm underline-offset-4 text-[#FAB435] hover:underline"
               >
                 Forgot your password?
               </Link>
@@ -136,7 +148,14 @@ const SignIn = () => {
                 type="submit"
                 className="mt-4 py-5 w-full bg-[#FAB435] text-[#3A3A3A] dark:hover:text-[#3A3A3A] hover:text-white"
               >
-                {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+                {form.formState.isSubmitting ? (
+                  <>
+                    Signing in...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </form>
           </Form>
