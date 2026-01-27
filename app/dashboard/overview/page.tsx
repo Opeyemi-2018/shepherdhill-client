@@ -58,7 +58,7 @@ const Overview = () => {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/client/dashboard`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/client/dashboard`,
           {
             method: "GET",
             headers: {

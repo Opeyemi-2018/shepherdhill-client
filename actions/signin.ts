@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // actions/auth.ts
 "use server";
 
@@ -134,6 +135,66 @@ export async function loginUser(
     return {
       success: false,
       message: "Network error. Please check your connection and try again.",
+    };
+  }
+}
+
+// update password 
+
+
+
+interface ChangePasswordPayload {
+  current_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}
+
+interface ChangePasswordResponse {
+  statusCode: number;
+  error: string | null;
+  message?: string;
+  data?: any;
+}
+
+export async function changePassword(
+  payload: ChangePasswordPayload,
+  token: string
+): Promise<ChangePasswordResponse> {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/client/change-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        error: data.message || "Failed to change password",
+        data: null,
+      };
+    }
+
+    return {
+      statusCode: response.status,
+      error: null,
+      message: data.message || "Password changed successfully",
+      data: data.data,
+    };
+  } catch (error) {
+    console.error("Change password error:", error);
+    return {
+      statusCode: 500,
+      error: "Network error. Please try again.",
+      data: null,
     };
   }
 }

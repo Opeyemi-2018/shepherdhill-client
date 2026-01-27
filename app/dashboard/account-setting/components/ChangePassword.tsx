@@ -1,3 +1,5 @@
+"use client";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,8 +13,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ResetPasswordSchema, ResetPasswordType } from "@/types/changePassword";
+import { changePassword } from "@/actions/signin";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 const ChangePassword = () => {
+  const { token } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<ResetPasswordType>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
@@ -22,9 +32,35 @@ const ChangePassword = () => {
     },
   });
 
-  const onSubmit = (data: ResetPasswordType) => {
-    console.log(data);
-    // Handle password update logic here
+  const onSubmit = async (data: ResetPasswordType) => {
+    if (!token) {
+      toast.error("Please sign in to change password");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await changePassword(
+        {
+          current_password: data.currentPassword,
+          new_password: data.newPassword,
+          new_password_confirmation: data.confirmPassword,
+        },
+        token
+      );
+
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        toast.success(response.message || "Password changed successfully");
+        form.reset();
+      } else {
+        toast.error(response.error || "Failed to change password");
+      }
+    } catch (error) {
+      console.error("Password change error:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -97,9 +133,17 @@ const ChangePassword = () => {
 
           <Button
             type="submit"
+            disabled={isLoading}
             className="w-[40%] bg-[#FAB435] text-[#3A3A3A] dark:text-[#3A3A3A] font-semibold hover:text-white"
           >
-            Update Password
+            {isLoading ? (
+              <>
+                Updating...
+                <ClipLoader size={16} color="#3A3A3A" className="ml-2" />
+              </>
+            ) : (
+              "Update Password"
+            )}
           </Button>
         </form>
       </Form>

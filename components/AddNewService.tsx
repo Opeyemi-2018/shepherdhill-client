@@ -73,10 +73,26 @@ const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="security">Security</SelectItem>
-                      <SelectItem value="guard">Guard</SelectItem>
-                      <SelectItem value="peacekeeping">
-                        Peace Keeping
+                      <SelectItem value="Premium Guards">
+                        Premium Guards
+                      </SelectItem>
+                      <SelectItem value="Elite Guards">Elite Guards</SelectItem>
+                      <SelectItem value="Regular Guards">
+                        Regular Guards
+                      </SelectItem>
+                      <SelectItem value="Supervisors">Supervisors</SelectItem>
+                      <SelectItem value="Bouncers">Bouncers</SelectItem>
+                      <SelectItem value="Carpark Marshalls">
+                        Carpark Marshalls
+                      </SelectItem>
+                      <SelectItem value="Contracts Manager">
+                        Contracts Manager
+                      </SelectItem>
+                      <SelectItem value="Control Room Manager">
+                        Control Room Manager
+                      </SelectItem>
+                      <SelectItem value="Armed Policemen">
+                        Armed Policemen
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -114,7 +130,10 @@ const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="float-right bg-[#FAB435]/30 text-[#E59300]">
+            <Button
+              type="submit"
+              className="float-right bg-[#FAB435]/30 text-[#E59300]"
+            >
               Submit
             </Button>
           </form>

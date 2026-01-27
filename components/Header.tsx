@@ -6,7 +6,17 @@ import { IoIosSettings } from "react-icons/io";
 import { LiaMoneyCheckSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import AddNewService from "./AddNewService";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +34,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -58,6 +69,7 @@ const Header = () => {
     setOpen(false);
   };
   const { setTheme } = useTheme();
+  const { logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full  border-b bg-primary-foreground">
@@ -192,9 +204,32 @@ const Header = () => {
                     + Request New Service
                   </Button>
                 </div>
-                <Button className="bg-[#F42121]/10  text-[#F42121] dark:bg-[#F42121] dark:text-white w-full md:w-[60%] mt-4">
-                  Sign Out
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button className="bg-[#F42121]/10  text-[#F42121] dark:bg-[#F42121]/20  dark:text-white w-full  mt-4">
+                      Sign Out
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="border border-white">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action will log you out of the system
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex items-center flex-row justify-center">
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => logout()}
+                        className="dark:text-white bg-red-500 dark:hover:text-[#3A3A3A]"
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </SheetContent>
             </Sheet>
           </div>

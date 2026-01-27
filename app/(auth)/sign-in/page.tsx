@@ -21,16 +21,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Loader2, Moon, Sun } from "lucide-react";
+import { Loader2, Moon, Sun, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { loginUser } from "@/actions/signin";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 const SignIn = () => {
   const { setTheme } = useTheme();
   const { login } = useAuth();
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInType>({
     resolver: zodResolver(SignInSchema),
@@ -125,13 +127,26 @@ const SignIn = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="enter your password"
-                        {...field}
-                        className="py-5"
-                        type="password"
-                        disabled={form.formState.isSubmitting}
-                      />
+                      <div className="relative">
+                        <Input
+                          placeholder="enter your password"
+                          {...field}
+                          className="py-5 pr-10"
+                          type={showPassword ? "text" : "password"}
+                          disabled={form.formState.isSubmitting}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
