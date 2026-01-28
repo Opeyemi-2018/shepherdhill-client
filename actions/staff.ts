@@ -6,6 +6,7 @@ interface ApiStaff {
     full_name: string;
     initials: string;
   };
+  name: string;
   email: string;
   role: string;
   resume_time: string;

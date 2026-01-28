@@ -29,7 +29,7 @@ function PaymentHistory() {
           label={
             isLoading ? "Loading..." : data?.header.title || "Payment History"
           }
-          value={isLoading ? "Loading..." : data?.header.total_amount || "NPR0"}
+          value={isLoading ? "Loading..." : data?.header.total_amount || "NGN"}
         />
       </div>
       <div className="w-full mt-7 space-y-6 ">

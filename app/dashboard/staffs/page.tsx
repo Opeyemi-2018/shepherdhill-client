@@ -79,7 +79,7 @@ const StaffList = () => {
 
       const mapped: Staff[] = rawStaff.map((item) => ({
         id: item.id.toString(),
-        name: item.staff_member?.full_name?.trim() || "Unknown Staff",
+        name: item.name.trim() || "Unknown Staff",
         email: item.email === "N/A" || !item.email ? "—" : item.email,
         timeResume: item.resume_time || "—",
         status: item.status || "Unknown",
