@@ -61,6 +61,8 @@ const StaffList = () => {
   const [reviewText, setReviewText] = useState("");
   const [isViewMode, setIsViewMode] = useState(false);
 
+  // const token = localStorage.getItem("authToken");
+
   const fetchStaff = async () => {
     if (!token) {
       setError("Please log in to view staff members");

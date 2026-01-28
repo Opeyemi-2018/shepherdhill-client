@@ -8,7 +8,7 @@ export type SubscriptionItem = {
   id: number;
   period: string;
   service: string;
-  numberOfStaffs: number;
+  number_of_staff: number;
   equipments: number;
   status: "Pending" | "paid";
   created_at?: string;

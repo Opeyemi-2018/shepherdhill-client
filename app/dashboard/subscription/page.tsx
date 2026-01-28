@@ -152,7 +152,7 @@ const SubScription = () => {
                           {item.service}
                         </TableCell>
                         <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
-                          {item.numberOfStaffs}
+                          {item.number_of_staff}
                         </TableCell>
                         <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
                           {item.equipments}

@@ -53,7 +53,9 @@ const SignIn = () => {
 
       if (result.user && result.token) {
         toast.success(result.message);
+        localStorage.setItem("authToken", result.token);
         login(result.user, result.token);
+
       } else {
         toast.error("Invalid response from server");
       }
