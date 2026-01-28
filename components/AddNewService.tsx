@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -28,9 +29,9 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/context/AuthContext";
 
-// --- 1. UPDATED SCHEMA ---
-// Using string validation because native date inputs return strings (YYYY-MM-DD)
+
 const NewplanSchema = z.object({
     service: z.string().min(1, "Service is required"),
     numOfStaff: z.string().min(1, "Number of staff is required"),
@@ -49,6 +50,7 @@ interface AddNewServiceprop {
 
 const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
     const [isLoading, setIsLoading] = useState(false);
+    const {token} = useAuth()
 
     const form = useForm<NewPlanType>({
         resolver: zodResolver(NewplanSchema),
@@ -64,15 +66,8 @@ const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
     const onSubmit = async (data: NewPlanType) => {
         setIsLoading(true);
         try {
-            const token = localStorage.getItem("authToken");
+            
 
-            if (!token) {
-                toast.error("Authentication error. Please login again.");
-                return;
-            }
-
-            // --- 2. PAYLOAD ---
-            // Native inputs already give us "YYYY-MM-DD", so no re-formatting needed
             const payload = {
                 service: data.service,
                 staff_count: parseInt(data.numOfStaff),
@@ -108,7 +103,6 @@ const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
                 toast.error(result.message || "Something went wrong");
             }
         } catch (error: any) {
-            console.error("Submission error:", error);
             toast.error(error.message || "Failed to connect to server");
         } finally {
             setIsLoading(false);
@@ -133,11 +127,11 @@ const AddNewService = ({ open, onOpenChange }: AddNewServiceprop) => {
                                     <FormLabel>Service Type</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger>
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Select a service" />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent className="w-full">
                                             <SelectItem value="Premium Guards">Premium Guards</SelectItem>
                                             <SelectItem value="Elite Guards">Elite Guards</SelectItem>
                                             <SelectItem value="Regular Guards">Regular Guards</SelectItem>

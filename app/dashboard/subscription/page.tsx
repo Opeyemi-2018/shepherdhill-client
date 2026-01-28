@@ -86,9 +86,9 @@ const SubScription = () => {
         </div>
       </div>
 
-      <div className="w-full mt-7 space-y-6 ">
+      <div className="w-full mt-4">
         <Card className="border-none bg-primary-foreground shadow-lg">
-          <CardHeader className="flex items-center justify-between p-2 lg:p-6">
+          <CardHeader className="flex items-center justify-between px-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               All Subscriptions
             </h1>

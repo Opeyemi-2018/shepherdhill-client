@@ -122,9 +122,9 @@ const Overview = () => {
           />
         </div>
 
-        <div className="w-full mt-7 space-y-6">
+        <div className="w-full mt-4">
           <Card className="border-none bg-primary-foreground shadow-lg">
-            <CardHeader className="flex items-center justify-between p-2 lg:p-6">
+            <CardHeader className="flex items-center justify-between px-6 ">
               <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
                 Subscriptions
               </h1>
@@ -136,7 +136,7 @@ const Overview = () => {
               </Button>
             </CardHeader>
 
-            <CardHeader className="p-2 lg:p-6">
+            <CardHeader className="px-2 lg:px-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                   <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">

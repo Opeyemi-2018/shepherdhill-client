@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { TfiReload } from "react-icons/tfi";
 import { useAuth } from "@/context/AuthContext";
 
-import { getClientStaff } from "@/actions/staff"; 
+import { getClientStaff } from "@/actions/staff";
 
 interface Staff {
   id: string;
@@ -60,8 +60,6 @@ const StaffList = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isViewMode, setIsViewMode] = useState(false);
-
-  // const token = localStorage.getItem("authToken");
 
   const fetchStaff = async () => {
     if (!token) {
@@ -259,8 +257,8 @@ const StaffList = () => {
                               staff.status === "Active"
                                 ? "text-[#5ECF53] bg-transparent"
                                 : staff.status === "On Leave"
-                                ? "text-[#E89500] bg-transparent"
-                                : "text-[#979797] bg-transparent"
+                                  ? "text-[#E89500] bg-transparent"
+                                  : "text-[#979797] bg-transparent"
                             }
                           >
                             <span
@@ -268,8 +266,8 @@ const StaffList = () => {
                                 staff.status === "Active"
                                   ? "bg-[#5ECF53]"
                                   : staff.status === "On Leave"
-                                  ? "bg-[#E89500]"
-                                  : "bg-[#979797]"
+                                    ? "bg-[#E89500]"
+                                    : "bg-[#979797]"
                               }`}
                             />
                             {staff.status}
@@ -339,8 +337,8 @@ const StaffList = () => {
               {isViewMode
                 ? "Staff Review"
                 : selectedStaff?.existingReview
-                ? "Update Review"
-                : "Add Review"}
+                  ? "Update Review"
+                  : "Add Review"}
             </DialogTitle>
           </DialogHeader>
 
