@@ -1,4 +1,3 @@
-// hooks/useSubscription.ts
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -51,7 +50,7 @@ export function useSubscription(
     period?: string;
   }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
-    setPage(1); // Reset to first page when filters change
+    setPage(1); 
   };
 
   const goToPage = (newPage: number) => {

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// actions/auth.ts
 "use server";
 
 import { cookies } from "next/headers";
@@ -58,7 +57,7 @@ export async function loginUser(
         body: JSON.stringify({
           email,
           password,
-          device_name: "web-browser", // Automatically set device name
+          device_name: "web-browser", 
         }),
       }
     );
@@ -66,7 +65,6 @@ export async function loginUser(
     const data: LoginResponse = await response.json();
 
     if (!response.ok) {
-      // Handle different error status codes
       if (response.status === 401) {
         return {
           success: false,
@@ -98,7 +96,6 @@ export async function loginUser(
       };
     }
 
-    // Check if user account is active
     if (data.data.user.is_active !== "1") {
       return {
         success: false,
@@ -106,7 +103,6 @@ export async function loginUser(
       };
     }
 
-    // Check if login is enabled
     if (data.data.user.is_login_enable !== "1") {
       return {
         success: false,
@@ -114,13 +110,12 @@ export async function loginUser(
       };
     }
 
-    // Set auth token in HTTP-only cookie for security
     const cookieStore = await cookies();
     cookieStore.set("auth_token", data.data.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7, 
       path: "/",
     });
 
@@ -138,8 +133,6 @@ export async function loginUser(
     };
   }
 }
-
-// update password 
 
 
 

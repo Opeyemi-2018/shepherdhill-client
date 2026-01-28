@@ -59,7 +59,7 @@ export function usePayment(
     to?: string;
   }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
-    setPage(1); // Reset to first page when filters change
+    setPage(1); 
   };
 
   const goToPage = (newPage: number) => {

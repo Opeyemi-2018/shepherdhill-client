@@ -25,11 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import PaymentHistory from "../payment-history/page";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
-import { useSubscription } from "@/hooks/useSubscription"; // ← Import the hook
-
-// Remove the static interface and array — we'll use hook data
-// interface SubscriptionItem { ... }
-// const subscriptionData: SubscriptionItem[] = [ ... ];
+import { useSubscription } from "@/hooks/useSubscription"; 
 
 interface DashboardData {
   company_name: string;
@@ -47,7 +43,6 @@ const Overview = () => {
   );
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
 
-  // Use the same hook as in Subscriptions page
   const {
     data: subscriptionData,
     isLoading: isLoadingSubscriptions,
@@ -125,9 +120,7 @@ const Overview = () => {
       </div>
 
       <div className="w-full mt-7 space-y-6">
-        {/* Subscription Info Card */}
         <Card className="border-none bg-primary-foreground shadow-lg">
-          {/* Header */}
           <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               Subscriptions
@@ -142,7 +135,6 @@ const Overview = () => {
 
           <CardHeader className="p-2 lg:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Active Subscription */}
               <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                 <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
                   Active Subscription

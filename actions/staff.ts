@@ -1,4 +1,3 @@
-// app/actions/staff.ts
 "use server";
 
 interface ApiStaff {
@@ -21,7 +20,6 @@ interface StaffResponse {
   data: {
     current_page: number;
     data: ApiStaff[];
-    // ... other pagination fields if present
   };
 }
 

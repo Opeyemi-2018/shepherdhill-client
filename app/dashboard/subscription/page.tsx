@@ -30,7 +30,6 @@ const SubScription = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data, isLoading, error, updateFilters } = useSubscription();
 
-  // Get all available services for display
   const allPlans =
     data?.filters.available_services.join(", ") || "No active plans";
 
@@ -88,9 +87,7 @@ const SubScription = () => {
       </div>
 
       <div className="w-full mt-7 space-y-6 ">
-        {/* Subscription Info Card */}
         <Card className="border-none bg-primary-foreground shadow-lg">
-          {/* Header */}
           <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               All Subscriptions
@@ -107,7 +104,6 @@ const SubScription = () => {
             </Select>
           </CardHeader>
 
-          {/* Table */}
           <CardContent className="p-2 lg:p-6">
             {error && (
               <div className="text-red-500 text-center py-4">{error}</div>
@@ -189,7 +185,6 @@ const SubScription = () => {
                   </TableBody>
                 </Table>
 
-                {/* Pagination Info */}
                 {data && data.items.total > 0 && (
                   <div className="flex items-center justify-between mt-4">
                     <p className="text-sm text-[#979797]">

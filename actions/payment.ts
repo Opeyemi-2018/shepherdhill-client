@@ -1,4 +1,3 @@
-// actions/payment.ts
 "use server";
 
 import { cookies } from "next/headers";
@@ -89,7 +88,6 @@ export async function getPayments(
       };
     }
 
-    // Build query parameters
     const params = new URLSearchParams({
       page: page.toString(),
     });

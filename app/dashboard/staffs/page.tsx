@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { TfiReload } from "react-icons/tfi";
 import { useAuth } from "@/context/AuthContext";
 
-import { getClientStaff } from "@/actions/staff"; // Adjust path based on your folder structure
+import { getClientStaff } from "@/actions/staff"; 
 
 interface Staff {
   id: string;
@@ -146,7 +146,6 @@ const StaffList = () => {
     setReviewRating(0);
     setReviewText("");
     setSelectedStaff(null);
-    // In production: call API to save the review
   };
 
   return (
@@ -331,7 +330,6 @@ const StaffList = () => {
         </Card>
       </div>
 
-      {/* Review Modal - unchanged */}
       <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
         <DialogContent className="sm:max-w-[500px] bg-primary-foreground">
           <DialogHeader>
@@ -346,7 +344,6 @@ const StaffList = () => {
 
           {selectedStaff && (
             <div className="space-y-6 py-4">
-              {/* Staff Info */}
               <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg">
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={selectedStaff.avatar} />
@@ -364,7 +361,6 @@ const StaffList = () => {
                 </div>
               </div>
 
-              {/* Rating */}
               <div>
                 <label className="text-[14px] font-medium text-[#3A3A3A] dark:text-white mb-2 block">
                   Rating
@@ -394,7 +390,6 @@ const StaffList = () => {
                 </div>
               </div>
 
-              {/* Review Text */}
               <div>
                 <label className="text-[14px] font-medium text-[#3A3A3A] dark:text-white mb-2 block">
                   Review

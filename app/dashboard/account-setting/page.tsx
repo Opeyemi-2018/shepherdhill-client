@@ -144,7 +144,6 @@ const {logout} = useAuth()
     <div className="mt-10">
       <Headercontent subTitle="Account Setting" />
 
-      {/* Mobile Menu Toggle */}
       <div className="lg:hidden mb-4">
         <Button
           variant="outline"
@@ -161,19 +160,16 @@ const {logout} = useAuth()
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Desktop Navigation */}
         <nav className="hidden lg:block w-64 flex-shrink-0 pt-6">
           <NavContent />
         </nav>
 
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <nav className="lg:hidden bg-primary-foreground p-4 rounded-lg shadow-lg mb-4">
             <NavContent />
           </nav>
         )}
 
-        {/* Content Area */}
         <div className="flex-1 w-full">{renderContent()}</div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-// context/AuthContext.tsx
 "use client";
 
 import {
@@ -15,7 +14,6 @@ type User = {
   name: string;
   email: string;
   type: string;
-  // Add other fields as needed
 };
 
 type AuthContextType = {
@@ -35,7 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Load user from localStorage on mount (optional, since we use cookies for token)
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       // eslint-disable-next-line react-hooks/set-state-in-effect

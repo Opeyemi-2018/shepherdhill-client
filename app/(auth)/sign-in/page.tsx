@@ -53,9 +53,7 @@ const SignIn = () => {
 
       if (result.user && result.token) {
         toast.success(result.message);
-        // Use the auth context login function
         login(result.user, result.token);
-        // The router.push is handled in the context's login function
       } else {
         toast.error("Invalid response from server");
       }

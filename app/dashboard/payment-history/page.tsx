@@ -33,9 +33,7 @@ function PaymentHistory() {
         />
       </div>
       <div className="w-full mt-7 space-y-6 ">
-        {/* Payment History Card */}
         <Card className="border-none bg-primary-foreground shadow-lg">
-          {/* Header */}
           <CardHeader className="flex items-center justify-between p-2 lg:p-6">
             <h1 className="text-[14px] font-bold text-[#3A3A3A] dark:text-white">
               {isLoading
@@ -133,7 +131,6 @@ function PaymentHistory() {
                   </TableBody>
                 </Table>
 
-                {/* Pagination Info */}
                 {data && data.rows.total > 0 && (
                   <div className="flex items-center justify-between mt-4">
                     <p className="text-sm text-[#979797]">
