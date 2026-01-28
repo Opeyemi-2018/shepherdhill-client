@@ -21,16 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-// Assuming you have a hook for this. 
-// If you are fetching inside useEffect, you can adapt this part.
-// For now, I'm mocking the hook usage based on your error log.
 import { usePayment } from "@/hooks/usePayment";
 
 const PaymentHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Using the hook that was likely causing the issue
-  // Ensure this hook exists, or replace with your actual data fetching logic
   const { data, isLoading, error } = usePayment();
 
   return (
@@ -99,9 +94,7 @@ const PaymentHistory = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {/* FIX APPLIED HERE:
-                   Using (item: any) prevents the build error by ignoring strict type checks.
-                */}
+
                     {data.rows.data.map((item: any, index: number) => (
                         <TableRow key={item.id || index}>
                           <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
@@ -136,7 +129,6 @@ const PaymentHistory = () => {
                           <TableCell>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                               <span className="sr-only">Open menu</span>
-                              {/* You can add an icon here like <MoreHorizontal /> */}
                               ...
                             </Button>
                           </TableCell>
