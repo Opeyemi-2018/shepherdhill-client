@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Octagon, Podcast, Menu, Sun, Moon } from "lucide-react";
 import { MdOutlinePayments } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
+import {IoIosBook, IoIosSettings} from "react-icons/io";
 import { LiaMoneyCheckSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import AddNewService from "./AddNewService";
@@ -54,7 +54,7 @@ const Header = () => {
       icon: MdOutlinePayments,
     },
     {
-      name: "Staff",
+      name: "Operatives",
       path: "/dashboard/staffs",
       icon: MdOutlinePayments,
     },
@@ -62,6 +62,11 @@ const Header = () => {
       name: "Account Setting",
       path: "/dashboard/account-setting",
       icon: IoIosSettings,
+    },
+    {
+      name: "Escalations",
+      path: "/dashboard/Escalations",
+      icon: IoIosBook,
     },
   ];
 
