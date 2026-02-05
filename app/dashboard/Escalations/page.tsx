@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 // --- Interfaces ---
 interface User {
@@ -74,6 +75,7 @@ const EscalationList = () => {
     const { token, user } = useAuth();
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     // Chat / Detail State
     const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
@@ -190,7 +192,7 @@ const EscalationList = () => {
                     <h1 className="text-2xl font-bold text-foreground">My Escalations</h1>
                     <p className="text-muted-foreground text-sm">Track and manage your submitted complaints</p>
                 </div>
-                <Button onClick={() => window.location.href='/dashboard/account-setting'} className="bg-[#FAB435] text-black hover:bg-[#E59300] dark:text-black font-medium">
+                <Button onClick={() => router.push("/dashboard/account-setting")} className="bg-[#FAB435] text-black hover:bg-[#E59300] dark:text-black font-medium">
                     + New Escalation
                 </Button>
             </div>
