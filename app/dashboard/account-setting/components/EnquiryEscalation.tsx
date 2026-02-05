@@ -119,7 +119,7 @@ const EnquiryEscalation = () => {
 
     return (
         <div className="bg-primary-foreground py-6 rounded-lg shadow-lg w-full">
-            <h2 className="text-[16px] font-bold mb-4 px-3 lg:px-6">Enquiry Escalation</h2>
+            <h2 className="text-[16px] font-bold mb-4 px-3 lg:px-6">Escalation</h2>
             <hr className="mb-4" />
             <div className="px-3 lg:px-6">
                 <Form {...form}>
@@ -157,7 +157,7 @@ const EnquiryEscalation = () => {
                             name="staffId"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel>Select Staff Member</FormLabel>
+                                    <FormLabel>Select Operative Member</FormLabel>
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger className="w-full h-12">

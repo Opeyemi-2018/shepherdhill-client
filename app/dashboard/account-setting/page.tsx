@@ -75,30 +75,30 @@ const {logout} = useAuth()
             Change Password
           </button>
         </li>
-        <li>
-          <button
-            onClick={() => handleTabChange("security")}
-            className={`w-full text-left py-3 rounded-lg transition-colors ${
-              activeTab === "security"
-                ? "text-[#FAB435] text-[14px] font-bold"
-                : "font-regular text-[#545454] dark:text-white"
-            }`}
-          >
-            Security
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleTabChange("payment")}
-            className={`w-full text-left py-3 rounded-lg transition-colors ${
-              activeTab === "payment"
-                ? "text-[#FAB435] text-[14px] font-bold"
-                : "font-regular text-[#545454] dark:text-white"
-            }`}
-          >
-            Payment Method
-          </button>
-        </li>
+        {/*<li>*/}
+        {/*  <button*/}
+        {/*    onClick={() => handleTabChange("security")}*/}
+        {/*    className={`w-full text-left py-3 rounded-lg transition-colors ${*/}
+        {/*      activeTab === "security"*/}
+        {/*        ? "text-[#FAB435] text-[14px] font-bold"*/}
+        {/*        : "font-regular text-[#545454] dark:text-white"*/}
+        {/*    }`}*/}
+        {/*  >*/}
+        {/*    Security*/}
+        {/*  </button>*/}
+        {/*</li>*/}
+        {/*<li>*/}
+        {/*  <button*/}
+        {/*    onClick={() => handleTabChange("payment")}*/}
+        {/*    className={`w-full text-left py-3 rounded-lg transition-colors ${*/}
+        {/*      activeTab === "payment"*/}
+        {/*        ? "text-[#FAB435] text-[14px] font-bold"*/}
+        {/*        : "font-regular text-[#545454] dark:text-white"*/}
+        {/*    }`}*/}
+        {/*  >*/}
+        {/*    Payment Method*/}
+        {/*  </button>*/}
+        {/*</li>*/}
         <li>
           <button
             onClick={() => handleTabChange("enquiry")}
@@ -108,7 +108,7 @@ const {logout} = useAuth()
                 : "font-regular text-[#545454] dark:text-white"
             }`}
           >
-            Enquiry Escalation
+            Escalation
           </button>
         </li>
       </ul>
