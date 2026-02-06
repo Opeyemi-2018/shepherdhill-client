@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // Added useRef
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
-import { Loader2, MessageSquare, Paperclip, Send, FileText } from "lucide-react";
+import { Loader2, MessageSquare, Paperclip, Send, FileText, X } from "lucide-react"; // Added X
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+// ... (other imports remain same)
 import {
     Table,
     TableBody,
@@ -32,44 +33,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 
 // --- Interfaces ---
-interface User {
-    id: number;
-    name: string;
-}
-
-interface Reply {
-    id: number;
-    message: string;
-    created_at: string;
-    user: User;
-    attachment?: string;
-}
-
-interface Employee {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-}
-
-interface Against {
-    id: number;
-    employee: Employee;
-}
-
-interface Complaint {
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    priority: string;
-    complaint_date: string;
-    created_at: string;
-    attachment?: string;
-    complaint_against: string;
-    against?: Against;
-    replies?: Reply[];
-}
+// ... (Interfaces remain same)
+interface User { id: number; name: string; }
+interface Reply { id: number; message: string; created_at: string; user: User; attachment?: string; }
+interface Employee { id: number; name: string; email: string; phone: string; }
+interface Against { id: number; employee: Employee; }
+interface Complaint { id: number; title: string; description: string; status: string; priority: string; complaint_date: string; created_at: string; attachment?: string; complaint_against: string; against?: Against; replies?: Reply[]; }
 
 const EscalationList = () => {
     const { token, user } = useAuth();
@@ -77,14 +46,16 @@ const EscalationList = () => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    // Chat / Detail State
     const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [replyMessage, setReplyMessage] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [loadingDetails, setLoadingDetails] = useState(false);
 
-    // 1. Fetch List
+    // --- New State for Attachment ---
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const fetchComplaints = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client/all-escalations`, {
@@ -106,7 +77,6 @@ const EscalationList = () => {
         if (token) fetchComplaints();
     }, [token]);
 
-    // 2. Fetch Single Detail (Replies)
     const openComplaint = async (id: number) => {
         setLoadingDetails(true);
         setIsSheetOpen(true);
@@ -125,26 +95,33 @@ const EscalationList = () => {
         }
     };
 
-    // 3. Send Reply
+    // --- Updated handleReply to support Files ---
     const handleReply = async () => {
-        if (!replyMessage.trim() || !selectedComplaint) return;
+        if (!replyMessage.trim() && !selectedFile) return;
+        if (!selectedComplaint) return;
 
         setIsSending(true);
         try {
+            const formData = new FormData();
+            formData.append("message", replyMessage);
+            if (selectedFile) {
+                formData.append("attachment", selectedFile);
+            }
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client/escalations/${selectedComplaint.id}/reply`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    // Note: Do NOT set Content-Type header when sending FormData
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ message: replyMessage })
+                body: formData
             });
 
             const data = await res.json();
             if (data.success) {
                 toast.success("Reply sent");
                 setReplyMessage("");
-                // Refresh the conversation
+                setSelectedFile(null); // Clear file
                 openComplaint(selectedComplaint.id);
             }
         } catch (error) {
@@ -154,28 +131,20 @@ const EscalationList = () => {
         }
     };
 
-    // Updated colors for dark mode compatibility
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case "pending":
-                return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
-            case "resolved":
-                return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
-            case "closed":
-                return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
-            default:
-                return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
+            case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
+            case "resolved": return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
+            case "closed": return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
+            default: return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
         }
     };
 
     const getPriorityColor = (priority: string) => {
         switch (priority.toLowerCase()) {
-            case 'high':
-                return 'text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-            case 'medium':
-                return 'text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800';
-            default:
-                return 'text-gray-600 border-gray-200 bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+            case 'high': return 'text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+            case 'medium': return 'text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800';
+            default: return 'text-gray-600 border-gray-200 bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
         }
     };
 
@@ -187,6 +156,7 @@ const EscalationList = () => {
 
     return (
         <div className="mt-10 space-y-6">
+            {/* ... (Table and List Code remains same) */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">My Escalations</h1>
@@ -280,7 +250,6 @@ const EscalationList = () => {
                 </CardContent>
             </Card>
 
-            {/* Chat/Detail Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetContent className="w-[400px] sm:w-[540px] flex flex-col h-full border-l border-border bg-background">
                     <SheetHeader className="mb-4 pb-4 border-b border-border">
@@ -324,20 +293,12 @@ const EscalationList = () => {
                                 )}
                             </div>
 
-                            {/* Chat Area */}
                             <div className="flex-1 flex flex-col overflow-hidden">
                                 <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Conversation</h4>
                                 <ScrollArea className="flex-1 pr-4 -mr-4">
                                     <div className="space-y-4 pb-4">
-                                        {selectedComplaint?.replies?.length === 0 && (
-                                            <div className="text-center py-10">
-                                                <p className="text-muted-foreground text-sm">No replies yet. Waiting for admin response.</p>
-                                            </div>
-                                        )}
-
                                         {selectedComplaint?.replies?.map((reply) => {
                                             const isMe = reply.user.id.toString() === user?.id?.toString();
-
                                             return (
                                                 <div key={reply.id} className={`flex gap-3 ${isMe ? "flex-row-reverse" : ""}`}>
                                                     <Avatar className="h-8 w-8 mt-1">
@@ -345,12 +306,8 @@ const EscalationList = () => {
                                                             {reply.user.name[0]}
                                                         </AvatarFallback>
                                                     </Avatar>
-
-                                                    {/* Message Bubble */}
                                                     <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
-                                                        isMe
-                                                            ? "bg-[#FAB435]/20 text-foreground dark:text-yellow-100 rounded-tr-none"
-                                                            : "bg-muted/50 border border-border text-foreground rounded-tl-none shadow-sm dark:bg-muted/20"
+                                                        isMe ? "bg-[#FAB435]/20 text-foreground dark:text-yellow-100 rounded-tr-none" : "bg-muted/50 border border-border text-foreground rounded-tl-none shadow-sm dark:bg-muted/20"
                                                     }`}>
                                                         <div className={`flex items-center gap-2 mb-1 ${isMe ? "justify-end" : ""}`}>
                                                             <span className="font-bold text-xs text-foreground">{reply.user.name}</span>
@@ -359,6 +316,18 @@ const EscalationList = () => {
                                                             </span>
                                                         </div>
                                                         <p className="leading-relaxed opacity-90">{reply.message}</p>
+                                                        {/* --- Added View Attachment in Replies --- */}
+                                                        {reply.attachment && (
+                                                            <div className="mt-2 pt-2 border-t border-white/10">
+                                                                <Link
+                                                                    href={getImageUrl(reply.attachment) || "#"}
+                                                                    target="_blank"
+                                                                    className="flex items-center gap-1 text-[10px] underline"
+                                                                >
+                                                                    <Paperclip className="h-3 w-3" /> View File
+                                                                </Link>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             );
@@ -367,9 +336,34 @@ const EscalationList = () => {
                                 </ScrollArea>
                             </div>
 
-                            {/* Input Area */}
-                            <SheetFooter className="mt-4 pt-4 border-t border-border bg-background">
+                            {/* --- Enhanced Input Area with File Support --- */}
+                            <SheetFooter className="mt-4 pt-4 border-t border-border bg-background flex-col gap-2">
+                                {selectedFile && (
+                                    <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md text-xs w-full">
+                                        <FileText className="h-3 w-3 text-primary" />
+                                        <span className="flex-1 truncate">{selectedFile.name}</span>
+                                        <button onClick={() => setSelectedFile(null)} className="text-muted-foreground hover:text-destructive">
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </div>
+                                )}
+
                                 <div className="flex w-full items-center gap-2">
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                                    />
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="shrink-0"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <Paperclip className="h-4 w-4" />
+                                    </Button>
+
                                     <Input
                                         placeholder="Type your reply..."
                                         value={replyMessage}
@@ -377,7 +371,7 @@ const EscalationList = () => {
                                         onKeyDown={(e) => e.key === "Enter" && handleReply()}
                                         className="flex-1 bg-background border-input text-foreground"
                                     />
-                                    <Button size="icon" onClick={handleReply} disabled={isSending || !replyMessage.trim()} className="bg-[#FAB435] text-black hover:bg-[#d49625]">
+                                    <Button size="icon" onClick={handleReply} disabled={isSending || (!replyMessage.trim() && !selectedFile)} className="bg-[#FAB435] text-black hover:bg-[#d49625]">
                                         {isSending ? <Loader2 className="animate-spin h-4 w-4" /> : <Send className="h-4 w-4" />}
                                     </Button>
                                 </div>
