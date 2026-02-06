@@ -158,7 +158,7 @@ const StaffList = () => {
         setReviewRating(0);
         setReviewText("");
         setSelectedStaff(null);
-        fetchStaff(); // Refresh list to show new rating immediately
+        fetchStaff(); 
       } else {
         toast.error(result.message || "Failed to submit review");
         if(result.errors) {
