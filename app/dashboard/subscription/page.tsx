@@ -39,7 +39,7 @@ const SubScription = () => {
   const [isProcessingPayment, setIsProcessingPayment] = useState<number | null>(null);
 
   const allPlans =
-      data?.filters.available_services.join(", ") || "No active plans";
+      data?.filters.available_services.join(", ") || "No active Operative";
 
   // Payment Logic
   const handlePayment = async (subscriptionId: number) => {
@@ -111,7 +111,7 @@ const SubScription = () => {
         <div className="flex items-center flex-col md:flex-row justify-between gap-4 pt-4">
           <StatCard
               icon={FaRegMoneyBillAlt}
-              label="Active Plan"
+              label="Active Operative"
               value={
                 isLoading
                     ? "Loading..."

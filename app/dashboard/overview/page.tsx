@@ -166,7 +166,7 @@ const Overview = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                   <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
-                    Active Subscription
+                    Active Operative
                   </CardDescription>
                   <h2 className="text-[16px] text-[#3A3A3A] font-bold dark:text-white">
                     {isLoadingSubscriptions ? "Loading..." : subscriptionData?.cards?.active_plans || "N/A"}

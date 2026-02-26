@@ -73,7 +73,7 @@ const StaffList = () => {
       const mapped: Staff[] = rawStaff.map((item: any) => ({
         id: item.id.toString(),
         name: item.name.trim() || "Unknown Staff",
-        email: item.email || "—",
+        date:item.created_at,
         timeResume: item.resume_time || "—",
         status: item.status || "Unknown",
         role: item.role || "Staff",
@@ -225,7 +225,8 @@ const StaffList = () => {
                       <TableHeader>
                         <TableRow className="bg-muted/50">
                           <TableHead>Operatives Member</TableHead>
-                          <TableHead>Email</TableHead>
+                          <TableHead>Date</TableHead>
+                          {/*<TableHead>Email</TableHead>*/}
                           <TableHead>Role</TableHead>
                           <TableHead>Resume Time</TableHead>
                           <TableHead>Status</TableHead>
@@ -249,7 +250,7 @@ const StaffList = () => {
                             </span>
                                 </div>
                               </TableCell>
-                              <TableCell className="text-[14px] text-[#979797]">{staff.email}</TableCell>
+                              <TableCell className="text-[14px] text-[#979797]">{staff.date}</TableCell>
                               <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
                                 {staff.role}
                               </TableCell>
