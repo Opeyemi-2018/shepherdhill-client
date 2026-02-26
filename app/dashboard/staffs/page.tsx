@@ -39,7 +39,8 @@ import { getClientStaff } from "@/actions/staff";
 interface Staff {
   id: string;
   name: string;
-  email: string;
+  email?: string;
+  date?: string;
   timeResume: string;
   status: string;
   avatar?: string;
@@ -47,7 +48,6 @@ interface Staff {
   rating?: number;
   existingReview?: string;
 }
-
 const StaffList = () => {
   const { token, user } = useAuth();
 
@@ -72,14 +72,16 @@ const StaffList = () => {
       const rawStaff = await getClientStaff(token);
       // Ensure your backend returns rating/review data here to populate the list correctly
       const mapped: Staff[] = rawStaff.map((item: any) => ({
-        id: item.id.toString(),
-        name: item.name.trim() || "Unknown Staff",
-        email: item.email || "—",
-        timeResume: item.resume_time || "—",
-        status: item.status || "Unknown",
-        role: item.role || "Staff",
+        id: String(item.id),
+        name: (item.name ?? "").trim() || "Unknown Staff",
+        email: item.email ?? item.user?.email ?? "",
+        date: item.created_at ?? "",
+        timeResume: item.resume_time ?? "—",
+        status: item.status ?? "Unknown",
+        avatar: item.avatar ?? item.profile_photo ?? "",  // optional
+        role: item.role ?? "Staff",
         rating: item.rating ?? 0,
-        existingReview: item.rating_comment ?? "", // Ensure backend sends this field
+        existingReview: item.rating_comment ?? "",
       }));
 
       setStaffList(mapped);
@@ -226,7 +228,8 @@ const StaffList = () => {
                       <TableHeader>
                         <TableRow className="bg-muted/50">
                           <TableHead>Operatives Member</TableHead>
-                          <TableHead>Email</TableHead>
+                          <TableHead>Date</TableHead>
+                          {/*<TableHead>Email</TableHead>*/}
                           <TableHead>Role</TableHead>
                           <TableHead>Resume Time</TableHead>
                           <TableHead>Status</TableHead>
@@ -250,7 +253,7 @@ const StaffList = () => {
                             </span>
                                 </div>
                               </TableCell>
-                              <TableCell className="text-[14px] text-[#979797]">{staff.email}</TableCell>
+                              <TableCell className="text-[14px] text-[#979797]">{staff.date}</TableCell>
                               <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">
                                 {staff.role}
                               </TableCell>
