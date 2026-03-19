@@ -5,7 +5,7 @@ import DateTimeDisplay from "@/components/DateTime";
 import Headercontent from "@/components/Headercontent";
 import { FaUsers } from "react-icons/fa6";
 import { MdOutlinePayments } from "react-icons/md";
-import { Loader2 } from "lucide-react"; // Import Loader
+import { Loader2, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +29,10 @@ import { useEffect, useState } from "react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
 
+// 1. IMPORT PDF LIBRARIES
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 interface DashboardData {
   company_name: string;
   active_staff: number;
@@ -36,6 +40,7 @@ interface DashboardData {
   active_subscription: string;
   validity_period: string;
   next_payment_date: string;
+  payment_rows?: any[]; // Added from your response structure
 }
 
 const Overview = () => {
@@ -43,6 +48,7 @@ const Overview = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState<number | null>(null);
+  const [isDownloading, setIsDownloading] = useState<number | null>(null);
 
   const {
     data: subscriptionData,
@@ -100,7 +106,6 @@ const Overview = () => {
             },
             body: JSON.stringify({
               subscription_id: subscriptionId,
-              // Redirect back to your verification page after payment
               callback_url: `${window.location.origin}/dashboard/payment-verify`,
             }),
           }
@@ -110,7 +115,6 @@ const Overview = () => {
 
       if (result.status && result.authorization_url) {
         toast.success("Redirecting to payment gateway...");
-        // Redirect user to SaySwitch
         window.location.href = result.authorization_url;
       } else {
         toast.error(result.message || "Could not initialize payment.");
@@ -120,6 +124,63 @@ const Overview = () => {
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsProcessingPayment(null);
+    }
+  };
+
+  // 2. NEW MANUAL PDF GENERATION FUNCTION
+  const handleDownloadReceipt = async (item: any) => {
+    // Optional: simulate network delay for UI feedback
+    setIsDownloading(item.id);
+
+    try {
+      const doc = new jsPDF();
+
+      // Get the payment reference if available in dashboard data
+      const paymentRef = dashboardData?.payment_rows?.[0]?.reference || `REF-${Math.floor(Math.random() * 1000000)}`;
+      const paymentDate = dashboardData?.payment_rows?.[0]?.date || new Date().toLocaleDateString();
+
+      // Header Info
+      doc.setFontSize(20);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Payment Receipt", 14, 22);
+
+      doc.setFontSize(11);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Company: ${dashboardData?.company_name || "N/A"}`, 14, 32);
+      doc.text(`Reference: ${paymentRef}`, 14, 38);
+      doc.text(`Date: ${paymentDate}`, 14, 44);
+
+      // Table Data
+      autoTable(doc, {
+        startY: 55,
+        headStyles: { fillColor: [250, 180, 53] }, // Matches your #FAB435 brand color
+        head: [["Period", "Service", "Number of Staffs", "Equipments", "Status"]],
+        body: [
+          [
+            item.period || "N/A",
+            item.service || "N/A",
+            item.number_of_staff || "0",
+            item.equipments || "0",
+            (item.status || "paid").toUpperCase()
+          ],
+        ],
+      });
+
+      // Footer Info
+      const finalY = (doc as any).lastAutoTable.finalY || 60;
+      doc.setFontSize(10);
+      doc.setTextColor(150, 150, 150);
+      doc.text("Thank you for your business!", 14, finalY + 20);
+
+      // Download the PDF
+      doc.save(`Receipt_${dashboardData?.company_name?.replace(/\s+/g, '_') || 'Payment'}.pdf`);
+
+      toast.success("Receipt downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate receipt.");
+    } finally {
+      setIsDownloading(null);
     }
   };
 
@@ -182,7 +243,6 @@ const Overview = () => {
                   </h2>
                 </div>
 
-                {/* Next Payment Card */}
                 <div className="bg-white dark:bg-black shadow-lg rounded-lg flex flex-col justify-center p-3">
                   <CardDescription className="text-[14px] text-[#979797] font-regular mb-1">
                     Next Payment Date
@@ -191,11 +251,9 @@ const Overview = () => {
                     {isLoadingSubscriptions ? "Loading..." : subscriptionData?.cards?.next_payment_date || "N/A"}
                   </h2>
 
-                  {/* Pay Next Bill Button */}
                   <Button
                       size="sm"
                       disabled={isProcessingPayment !== null || isLoadingSubscriptions}
-                      // Finds the first unpaid item to pay, or defaults to first item
                       onClick={() => {
                         const nextUnpaid = subscriptionData?.items?.data?.find((i: any) => i.status !== 'paid');
                         if(nextUnpaid) handlePayment(nextUnpaid.id);
@@ -211,7 +269,6 @@ const Overview = () => {
               </div>
             </CardHeader>
 
-            {/* Table */}
             <CardContent className="p-2 lg:p-6">
               <div className="">
                 {subscriptionError && (
@@ -235,6 +292,7 @@ const Overview = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
+                        {/* Note: I'm assuming subscriptionData?.items?.data maps to the subscription_rows format you provided */}
                         {subscriptionData?.items?.data?.map((item: any, index: number) => (
                             <TableRow key={item.id || index}>
                               <TableCell className="font-medium text-[14px] text-[#3A3A3A] dark:text-[#979797]">{item.period || "N/A"}</TableCell>
@@ -248,7 +306,6 @@ const Overview = () => {
                                 </Badge>
                               </TableCell>
 
-                              {/* Action Cell: Pay Now or Download */}
                               <TableCell>
                                 {item.status !== "paid" ? (
                                     <Button
@@ -263,7 +320,19 @@ const Overview = () => {
                                       ) : "Pay Now"}
                                     </Button>
                                 ) : (
-                                    <Button variant="outline" size="sm">
+                                    // 3. PASS THE ITEM DATA TO THE FUNCTION
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={isDownloading === item.id}
+                                        onClick={() => handleDownloadReceipt(item)}
+                                        className="flex items-center gap-2"
+                                    >
+                                      {isDownloading === item.id ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                          <Download className="h-4 w-4" />
+                                      )}
                                       Download
                                     </Button>
                                 )}

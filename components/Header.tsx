@@ -4,7 +4,7 @@ import { Octagon, Podcast, Menu, Sun, Moon } from "lucide-react";
 import { MdOutlinePayments } from "react-icons/md";
 import {IoIosBook, IoIosSettings} from "react-icons/io";
 import { LiaMoneyCheckSolid } from "react-icons/lia";
-import { LuLayoutDashboard } from "react-icons/lu";
+import {LuHistory, LuLayoutDashboard} from "react-icons/lu";
 import AddNewService from "./AddNewService";
 import {
   AlertDialog,
@@ -67,6 +67,11 @@ const Header = () => {
       name: "Escalations",
       path: "/dashboard/Escalations",
       icon: IoIosBook,
+    },
+    {
+      name: "Audit Logs",
+      path: "/dashboard/audit-logs",
+      icon: LuHistory,
     },
   ];
 

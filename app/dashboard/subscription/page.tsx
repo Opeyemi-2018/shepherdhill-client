@@ -4,8 +4,9 @@ import StatCard from "@/components/Cards";
 import Headercontent from "@/components/Headercontent";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
-import { Loader2 } from "lucide-react"; // Import Loader
-import { toast } from "sonner"; // Import Toast
+// 1. ADDED: Download icon for the button
+import { Loader2, Download } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -28,20 +29,25 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import AddNewService from "@/components/AddNewService";
 import { useSubscription } from "@/hooks/useSubscription";
-import { useAuth } from "@/context/AuthContext"; // Import Auth
+import { useAuth } from "@/context/AuthContext";
+
+// 2. IMPORT PDF LIBRARIES
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const SubScription = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { token } = useAuth(); // Get token
+  const { token } = useAuth();
   const { data, isLoading, error, updateFilters } = useSubscription();
 
-  // State for payment loading
   const [isProcessingPayment, setIsProcessingPayment] = useState<number | null>(null);
+
+  // 3. NEW STATE: Track which receipt is downloading
+  const [isDownloading, setIsDownloading] = useState<number | null>(null);
 
   const allPlans =
       data?.filters.available_services.join(", ") || "No active Operative";
 
-  // Payment Logic
   const handlePayment = async (subscriptionId: number) => {
     if (!subscriptionId) {
       toast.error("Invalid subscription selected");
@@ -81,7 +87,6 @@ const SubScription = () => {
     }
   };
 
-  // Helper to pay the first found pending subscription
   const payNextPending = () => {
     const nextUnpaid = data?.items.data.find((i: any) => i.status !== 'paid');
     if (nextUnpaid) {
@@ -91,11 +96,63 @@ const SubScription = () => {
     }
   };
 
+  // 4. NEW FUNCTION: Generate and download the PDF
+  const handleDownloadReceipt = async (item: any) => {
+    setIsDownloading(item.id);
+
+    try {
+      const doc = new jsPDF();
+      const paymentDate = new Date().toLocaleDateString();
+      const paymentRef = `REF-${Math.floor(Math.random() * 1000000)}`;
+
+      // Header Info
+      doc.setFontSize(20);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Payment Receipt", 14, 22);
+
+      doc.setFontSize(11);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Reference: ${paymentRef}`, 14, 32);
+      doc.text(`Date: ${paymentDate}`, 14, 38);
+
+      // Table Data
+      autoTable(doc, {
+        startY: 50,
+        headStyles: { fillColor: [250, 180, 53] }, // Brand color
+        head: [["Period", "Service", "Number of Staffs", "Equipments", "Status"]],
+        body: [
+          [
+            item.period || "N/A",
+            item.service || "N/A",
+            item.number_of_staff?.toString() || "0",
+            item.equipments?.toString() || "0",
+            (item.status || "paid").toUpperCase()
+          ],
+        ],
+      });
+
+      // Footer Info
+      const finalY = (doc as any).lastAutoTable.finalY || 60;
+      doc.setFontSize(10);
+      doc.setTextColor(150, 150, 150);
+      doc.text("Thank you for your business!", 14, finalY + 20);
+
+      // Save the PDF
+      doc.save(`Receipt_${item.service?.replace(/\s+/g, '_') || 'Subscription'}.pdf`);
+
+      toast.success("Receipt downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate receipt.");
+    } finally {
+      setIsDownloading(null);
+    }
+  };
+
   return (
       <div className="mt-10">
         <div className="flex items-center justify-between ">
           <Headercontent subTitle="Subscriptions " />
-          {/* Global Make Payment Button */}
           <Button
               className="bg-[#FAB435] hover:bg-[#FAB435]/80"
               onClick={payNextPending}
@@ -150,7 +207,6 @@ const SubScription = () => {
               + Request New Service
             </Button>
 
-            {/* Secondary Make Payment Button */}
             <Button
                 className="bg-[#FAB435] hover:bg-[#FAB435]/80"
                 onClick={payNextPending}
@@ -174,7 +230,7 @@ const SubScription = () => {
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem> {/* Capitalization fixed to match usually lowercase API values */}
+                  <SelectItem value="pending">Pending</SelectItem>
                 </SelectContent>
               </Select>
             </CardHeader>
@@ -202,7 +258,7 @@ const SubScription = () => {
                           <TableHead>Number of Staffs</TableHead>
                           <TableHead>Equipments</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Action</TableHead> {/* Renamed Download to Action */}
+                          <TableHead>Action</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -252,7 +308,19 @@ const SubScription = () => {
                                       ) : "Pay Now"}
                                     </Button>
                                 ) : (
-                                    <Button variant="outline" size="sm">
+                                    // 5. UPDATED BUTTON UI: Passed item and added loading state
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={isDownloading === item.id}
+                                        onClick={() => handleDownloadReceipt(item)}
+                                        className="flex items-center gap-2"
+                                    >
+                                      {isDownloading === item.id ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                          <Download className="h-4 w-4" />
+                                      )}
                                       Download
                                     </Button>
                                 )}
