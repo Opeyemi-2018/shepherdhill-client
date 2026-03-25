@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   FileText,
   Clock,
-  Eye, // <-- ADDED EYE ICON
+  Eye,
   X
 } from "lucide-react";
 
@@ -229,21 +229,21 @@ const Overview = () => {
     }
   };
 
-  // --- OPEN DOCUMENT PREVIEW ---
-  // --- OPEN DOCUMENT PREVIEW ---
+  // --- OPEN DOCUMENT PREVIEW (PDF SUPPORTED) ---
   const openPreview = (url: string | undefined) => {
     if (!url) {
       toast.error("No document available to view.");
       return;
     }
+
+    // Extract just the file path
     let filePath = url;
     if (url.includes('storage/')) {
       filePath = url.split('storage/').pop() || url;
     }
+
+    // Construct exact custom URL
     const customUrl = `${process.env.NEXT_PUBLIC_API_URL}/storage/app/public/${filePath}`;
-
-    console.log("Loading Proof From:", customUrl);
-
     setPreviewUrl(customUrl);
     setIsPreviewModalOpen(true);
   };
@@ -368,8 +368,9 @@ const Overview = () => {
                       size="sm"
                       disabled={isProcessingPayment !== null || isLoadingSubscriptions}
                       onClick={() => {
+                        // UPDATED: Finds the next unpaid item, ignoring pending items ONLY if they have proof of payment
                         const nextUnpaid = subscriptionData?.items?.data?.find(
-                            (i: any) => i.status !== 'paid' && i.status !== 'pending'
+                            (i: any) => i.status !== 'paid' && !(i.status === 'pending' && i.proof_of_payment)
                         );
                         if(nextUnpaid) {
                           handlePayment(nextUnpaid.id);
@@ -423,7 +424,6 @@ const Overview = () => {
                                 </Badge>
                               </TableCell>
 
-                              {/* --- UPDATED ACTION COLUMN --- */}
                               <TableCell>
                                 {item.status?.toLowerCase() === "paid" ? (
                                     <div className="flex items-center gap-2">
@@ -442,7 +442,6 @@ const Overview = () => {
                                         Receipt
                                       </Button>
 
-                                      {/* Show eye icon if a proof URL is returned from DB for paid items too */}
                                       {item.proof_of_payment && (
                                           <Button
                                               variant="ghost"
@@ -455,27 +454,26 @@ const Overview = () => {
                                           </Button>
                                       )}
                                     </div>
-                                ) : item.status?.toLowerCase() === "pending" ? (
+                                ) : item.status?.toLowerCase() === "pending" && item.proof_of_payment ? (
+                                    // UPDATED: Now requires `item.proof_of_payment` to be truthy to show "Under Review"
                                     <div className="flex items-center gap-2">
                                       <div className="flex items-center gap-2 text-[#E89500] bg-[#FAB435]/10 px-3 py-1.5 rounded-md w-fit text-sm font-medium border border-[#FAB435]/20">
                                         <Clock className="h-4 w-4" />
                                         Under Review
                                       </div>
 
-                                      {/* Eye Icon to view the submitted proof while pending */}
-                                      {item.proof_of_payment && (
-                                          <Button
-                                              variant="ghost"
-                                              size="icon"
-                                              onClick={() => openPreview(item.proof_of_payment)}
-                                              className="text-gray-500 hover:text-[#E89500] bg-muted/50"
-                                              title="View Submitted Proof"
-                                          >
-                                            <Eye className="h-4 w-4" />
-                                          </Button>
-                                      )}
+                                      <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => openPreview(item.proof_of_payment)}
+                                          className="text-gray-500 hover:text-[#E89500] bg-muted/50"
+                                          title="View Submitted Proof"
+                                      >
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
                                     </div>
                                 ) : (
+                                    // UPDATED: Fallback UI when unpaid, OR when pending but `proof_of_payment` is null
                                     <div className="flex items-center gap-2">
                                       <Button
                                           variant="outline"
@@ -513,11 +511,9 @@ const Overview = () => {
 
         <PaymentHistory />
 
-        {/* --- MANUAL PAYMENT DIALOG (Omitted for brevity, unchanged) --- */}
+        {/* --- MANUAL PAYMENT DIALOG --- */}
         <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
-          {/* ... (Keep your existing Manual Payment Dialog code here) ... */}
           <DialogContent className="sm:max-w-[700px] md:max-w-[800px] p-0 overflow-hidden">
-
             <div className="p-6 border-b bg-muted/20">
               <DialogTitle className="text-xl flex items-center gap-2">
                 <Landmark className="h-5 w-5 text-[#E89500]" />
@@ -529,7 +525,6 @@ const Overview = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-
               <div className="p-6 bg-muted/10 border-r md:border-b-0 border-b">
                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-4">
                   Company Bank Details
@@ -660,8 +655,7 @@ const Overview = () => {
           </DialogContent>
         </Dialog>
 
-
-        {/* --- DOCUMENT PREVIEW DIALOG --- */}
+        {/* --- DOCUMENT PREVIEW DIALOG (NOW HANDLES PDFS) --- */}
         <Dialog open={isPreviewModalOpen} onOpenChange={setIsPreviewModalOpen}>
           <DialogContent className="max-w-[80vw] h-[85vh] p-0 flex flex-col overflow-hidden bg-black/90 border-0">
             <div className="flex justify-between items-center p-4 bg-black/50 text-white">
@@ -679,14 +673,21 @@ const Overview = () => {
               </Button>
             </div>
 
-            <div className="flex-1 w-full h-full relative flex items-center justify-center overflow-auto p-4">
+            <div className="flex-1 w-full h-full relative flex items-center justify-center overflow-hidden p-4">
               {previewUrl && (
-                  previewUrl.toLowerCase().endsWith('.pdf') ? (
-                      <iframe
-                          src={previewUrl}
+                  // Detect PDF by extension
+                  previewUrl.toLowerCase().split('?')[0].endsWith('.pdf') ? (
+                      <object
+                          data={previewUrl}
+                          type="application/pdf"
                           className="w-full h-full rounded bg-white"
-                          title="PDF Document Viewer"
-                      />
+                      >
+                        <iframe
+                            src={previewUrl}
+                            className="w-full h-full rounded bg-white"
+                            title="PDF Document Viewer"
+                        />
+                      </object>
                   ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -699,7 +700,6 @@ const Overview = () => {
             </div>
           </DialogContent>
         </Dialog>
-
       </div>
   );
 };
