@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-// ... (other imports remain same)
 import {
     Table,
     TableBody,
@@ -28,14 +27,11 @@ import {
     SheetDescription,
     SheetFooter,
 } from "@/components/ui/sheet";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 
 // --- Interfaces ---
-// ... (Interfaces remain same)
-
 interface User { id: number; name: string; }
 interface Reply { id: number; message: string; created_at: string; user: User; attachment?: string; }
 interface Employee { id: number; name: string; email: string; phone: string; }
@@ -133,7 +129,10 @@ const EscalationList = () => {
         }
     };
 
-    const getStatusColor = (status: string) => {
+    // ADDED SAFETY CHECK: if status is undefined, return default
+    const getStatusColor = (status?: string) => {
+        if (!status) return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
+
         switch (status.toLowerCase()) {
             case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
             case "resolved": return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
@@ -142,7 +141,10 @@ const EscalationList = () => {
         }
     };
 
-    const getPriorityColor = (priority: string) => {
+    // ADDED SAFETY CHECK: if priority is undefined, return default
+    const getPriorityColor = (priority?: string) => {
+        if (!priority) return 'text-gray-600 border-gray-200 bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+
         switch (priority.toLowerCase()) {
             case 'high': return 'text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
             case 'medium': return 'text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800';
@@ -158,7 +160,6 @@ const EscalationList = () => {
 
     return (
         <div className="mt-10 space-y-6">
-            {/* ... (Table and List Code remains same) */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">My Escalations</h1>
@@ -230,13 +231,15 @@ const EscalationList = () => {
                                             )}
                                         </TableCell>
                                         <TableCell>
+                                            {/* ADDED SAFETY: Fallback text if priority is null */}
                                             <Badge variant="outline" className={`capitalize ${getPriorityColor(item.priority)}`}>
-                                                {item.priority}
+                                                {item.priority || 'Normal'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
+                                            {/* ADDED SAFETY: Fallback text if status is null */}
                                             <Badge className={getStatusColor(item.status)} variant="outline">
-                                                {item.status}
+                                                {item.status || 'Pending'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
@@ -264,7 +267,7 @@ const EscalationList = () => {
                             </div>
                             {selectedComplaint && (
                                 <Badge className={getStatusColor(selectedComplaint.status)} variant="outline">
-                                    {selectedComplaint.status}
+                                    {selectedComplaint.status || 'Pending'}
                                 </Badge>
                             )}
                         </div>
@@ -318,7 +321,6 @@ const EscalationList = () => {
                                                             </span>
                                                         </div>
                                                         <p className="leading-relaxed opacity-90">{reply.message}</p>
-                                                        {/* --- Added View Attachment in Replies --- */}
                                                         {reply.attachment && (
                                                             <div className="mt-2 pt-2 border-t border-white/10">
                                                                 <Link
@@ -338,7 +340,6 @@ const EscalationList = () => {
                                 </ScrollArea>
                             </div>
 
-                            {/* --- Enhanced Input Area with File Support --- */}
                             <SheetFooter className="mt-4 pt-4 border-t border-border bg-background flex-col gap-2">
                                 {selectedFile && (
                                     <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md text-xs w-full">
