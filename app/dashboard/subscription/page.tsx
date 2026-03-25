@@ -213,11 +213,10 @@ const SubScription = () => {
     }
 
     // Construct exact custom URL
-    const customUrl = `https://shepherdhill.app.edubiller.com/storage/app/public/${filePath}`;
+    const customUrl = `${process.env.NEXT_PUBLIC_API_URL}/storage/app/public/${filePath}`;
     setPreviewUrl(customUrl);
     setIsPreviewModalOpen(true);
   };
-
   // --- DOWNLOAD RECEIPT ---
   const handleDownloadReceipt = async (item: any) => {
     setIsDownloading(item.id);
