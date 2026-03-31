@@ -205,7 +205,7 @@ const Overview = () => {
       formData.append("proof_of_payment", manualFormData.proof_of_payment);
 
       const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/payment/manual`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/client/initialize/manual`,
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
