@@ -165,9 +165,13 @@ const Overview = () => {
   // --- MANUAL PAYMENT LOGIC ---
   const openManualPaymentModal = (subscriptionId: number) => {
     setSelectedSubForManual(subscriptionId);
+
+    // Auto-generate a random 8-character reference string (e.g., TRN-4A9B8C2D)
+    const generatedRef = `TRN-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+
     setManualFormData({
       payment_date: new Date().toISOString().split('T')[0],
-      teller_reference: "",
+      teller_reference: generatedRef, // Prefill with the generated reference
       proof_of_payment: null,
     });
     setCopied(false);
@@ -368,7 +372,6 @@ const Overview = () => {
                       size="sm"
                       disabled={isProcessingPayment !== null || isLoadingSubscriptions}
                       onClick={() => {
-                        // UPDATED: Finds the next unpaid item, ignoring pending items ONLY if they have proof of payment
                         const nextUnpaid = subscriptionData?.items?.data?.find(
                             (i: any) => i.status !== 'paid' && !(i.status === 'pending' && i.proof_of_payment)
                         );
@@ -455,7 +458,6 @@ const Overview = () => {
                                       )}
                                     </div>
                                 ) : item.status?.toLowerCase() === "pending" && item.proof_of_payment ? (
-                                    // UPDATED: Now requires `item.proof_of_payment` to be truthy to show "Under Review"
                                     <div className="flex items-center gap-2">
                                       <div className="flex items-center gap-2 text-[#E89500] bg-[#FAB435]/10 px-3 py-1.5 rounded-md w-fit text-sm font-medium border border-[#FAB435]/20">
                                         <Clock className="h-4 w-4" />
@@ -473,7 +475,6 @@ const Overview = () => {
                                       </Button>
                                     </div>
                                 ) : (
-                                    // UPDATED: Fallback UI when unpaid, OR when pending but `proof_of_payment` is null
                                     <div className="flex items-center gap-2">
                                       <Button
                                           variant="outline"
@@ -576,7 +577,7 @@ const Overview = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="teller_reference" className="text-sm font-medium">Reference Number (Optional)</Label>
+                    <Label htmlFor="teller_reference" className="text-sm font-medium">Reference Number</Label>
                     <Input
                         id="teller_reference"
                         placeholder="e.g. TRN-987654321"
@@ -655,7 +656,7 @@ const Overview = () => {
           </DialogContent>
         </Dialog>
 
-        {/* --- DOCUMENT PREVIEW DIALOG (NOW HANDLES PDFS) --- */}
+        {/* --- DOCUMENT PREVIEW DIALOG --- */}
         <Dialog open={isPreviewModalOpen} onOpenChange={setIsPreviewModalOpen}>
           <DialogContent className="max-w-[80vw] h-[85vh] p-0 flex flex-col overflow-hidden bg-black/90 border-0">
             <div className="flex justify-between items-center p-4 bg-black/50 text-white">
@@ -675,7 +676,6 @@ const Overview = () => {
 
             <div className="flex-1 w-full h-full relative flex items-center justify-center overflow-hidden p-4">
               {previewUrl && (
-                  // Detect PDF by extension
                   previewUrl.toLowerCase().split('?')[0].endsWith('.pdf') ? (
                       <object
                           data={previewUrl}

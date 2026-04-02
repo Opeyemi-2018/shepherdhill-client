@@ -13,6 +13,7 @@ export type SubscriptionItem = {
   status: "Pending" | "paid";
   created_at?: string;
   updated_at?: string;
+  document_path?: string;
 };
 
 export type SubscriptionCards = {
@@ -106,6 +107,7 @@ export async function getSubscriptions(
       },
       cache: "no-store",
     });
+    console.log(response);
 
     if (!response.ok) {
       if (response.status === 401) {
@@ -122,6 +124,7 @@ export async function getSubscriptions(
 
     const result: SubscriptionResponse = await response.json();
 
+    console.log(result);
     if (!result.status) {
       return {
         success: false,
