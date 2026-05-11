@@ -127,9 +127,19 @@ export async function loginUser(
     };
   } catch (error) {
     console.error("Login error:", error);
+
+    const err = error as NodeJS.ErrnoException;
+    if (err?.code === "ERR_TLS_CERT_ALTNAME_INVALID") {
+      return {
+        success: false,
+        message:
+          "Backend SSL certificate does not match the API domain. Use an API host with a matching certificate or switch to HTTP for local development.",
+      };
+    }
+
     return {
       success: false,
-      message: "Network error. Please check your connection and try again.",
+      message: "Backend SSL certificate does not match the API domain. Use an API host with a matching certificate or switch to HTTP for local development.",
     };
   }
 }

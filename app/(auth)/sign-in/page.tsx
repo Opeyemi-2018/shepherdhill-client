@@ -45,6 +45,7 @@ const SignIn = () => {
     try {
       const result = await loginUser(data.email, data.password);
 
+      console.log(result);
       if (!result.success) {
         toast.error(result.message);
         return;
